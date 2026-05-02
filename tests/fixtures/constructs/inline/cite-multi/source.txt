@@ -1,0 +1,3 @@
+Source: 1810.04805 (BERT) intro.tex line 5 — multi-key \citep ubiquitous.
+Construct: \citep{a,b} → [@a; @b] (pandoc style, matches simple-paper).
+Note: ~ (non-breaking space) becomes a regular space.

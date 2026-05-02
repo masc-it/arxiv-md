@@ -1,0 +1,4 @@
+Source: \caption used outside any figure/table float (rare but observed).
+Construct: standalone \caption{X} → plain paragraph "X" (no "Figure:" prefix, no italics).
+Policy (RENDERBUGS-331): caption auto-numbering and float labelling belong to the
+rendering layer, not the converter. The converter preserves source content only.

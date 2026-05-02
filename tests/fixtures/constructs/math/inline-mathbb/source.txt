@@ -1,0 +1,3 @@
+Source: 2305.14314 — typical analysis statement.
+Construct: \mathbb{R}, \to inside $...$ — preserved as TeX rather than
+unicode-rendered, since blackboard-bold + arrow round-trip cleanly only as TeX.

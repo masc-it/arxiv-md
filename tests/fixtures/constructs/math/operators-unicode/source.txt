@@ -1,0 +1,4 @@
+Source: 103 \times hits + frequent \le, \cdot, \in, \subseteq across corpus.
+Construct: common math operators with unicode equivalents render to unicode
+when no TeX-only construct (\frac, \mathbb, \mathcal, \mathbf) appears in
+the same span.

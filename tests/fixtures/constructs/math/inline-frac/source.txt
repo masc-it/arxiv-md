@@ -1,0 +1,3 @@
+Source: ML papers everywhere (energy-based / softmax denominators).
+Construct: \frac has no clean unicode form → preserve whole math span as TeX.
+Bug-finder: catches converters that half-render \frac (e.g. drop braces).

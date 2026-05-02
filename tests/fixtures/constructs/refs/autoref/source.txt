@@ -1,0 +1,14 @@
+Hand-crafted fixture for ARX-CONSTRUCTS-364.
+
+Covers `\label{sec:...}` paired with `\autoref{sec:...}`. The converter
+generates an autoref-style numbered ref of form "Section <id>" via
+src/arxiv_md/tex/transform/refs.py::_format_ref (kind="autoref", category=
+"section"). For section labels, the section "number" slot currently holds the
+heading text rather than a numeral, since no section counter is tracked at
+label-build time — matching the existing behavior in _build_label_index.
+
+What we lock in:
+- `\autoref{sec:intro}` -> "Section Introduction"
+- `\autoref{sec:methods}` -> "Section Methods"
+- "Section " prefix is emitted (not raw `[key]` fallback), confirming the
+  label index resolved both keys.

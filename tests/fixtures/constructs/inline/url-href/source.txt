@@ -1,0 +1,4 @@
+Source: hyperref is universal in arxiv papers.
+Construct: \url{X} → <X> (CommonMark autolink); \href{X}{Y} → [Y](X) (link).
+Note: rich-table-paper uses HTML <a> tags for links inside table cells;
+in body text we expect markdown link syntax.

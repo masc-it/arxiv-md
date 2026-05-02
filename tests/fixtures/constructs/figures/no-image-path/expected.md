@@ -1,0 +1,1 @@
+Standalone caption with no figure float.

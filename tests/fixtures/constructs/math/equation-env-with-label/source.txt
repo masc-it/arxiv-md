@@ -1,0 +1,3 @@
+Source: 2305.14314 / 2508.21085 — equation env w/ label is universal.
+Construct: equation env → display block; \label drops out (kept by xref).
+Note: TeX content of display math is preserved verbatim, not unicode-rendered.

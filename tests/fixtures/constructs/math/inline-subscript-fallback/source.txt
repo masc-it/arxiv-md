@@ -1,0 +1,7 @@
+Source: synthetic stress test for subscript-rendering policy.
+Construct: subscripts whose target character has NO unicode subscript
+modifier letter (q, z, w, b, c, d, f, g, y) must fall back to HTML <sub>.
+The covered set (a, e, h, i, j, k, l, m, n, o, p, r, s, t, u, v, x, 0-9)
+renders as unicode (see inline-mathbf).
+Bug-finder: catches converters that emit half-width or wrong fallback
+chars when the modifier-letter table doesn't have the target.

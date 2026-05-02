@@ -1,0 +1,2 @@
+Source: ubiquitous; e.g. 1810.04805 various.
+Construct: \emph{x} → *x*

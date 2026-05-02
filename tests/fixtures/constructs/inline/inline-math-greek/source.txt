@@ -1,0 +1,2 @@
+Source: ML-paper convention; matches simple-paper snapshot style.
+Construct: simple Greek inline math renders as unicode characters.

@@ -1,0 +1,4 @@
+Source: 82 \caption hits across corpus; \begin{figure}+\includegraphics+\caption+\label is canonical.
+Construct: figure env with image + caption + label → markdown image ![caption](path).
+Note: hand-authored expectation; converter may emit HTML <figure>+<figcaption> instead.
+This will surface as a drift if so — judge correctness from the diff.

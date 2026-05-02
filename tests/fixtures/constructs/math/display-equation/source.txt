@@ -1,0 +1,2 @@
+Source: simple-paper snapshot convention.
+Construct: \[ ... \] → $$\n...\n$$ block.

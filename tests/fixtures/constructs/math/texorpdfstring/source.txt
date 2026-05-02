@@ -1,0 +1,10 @@
+Hand-crafted fixture for ARX-CONSTRUCTS-350.
+
+Covers `\texorpdfstring{TeX}{PDFstring}`:
+- In `\section` heading: PDF-string variant ("x squared") is emitted, since
+  markdown headings are plain text.
+- Inline body: PDF-string variant ("alpha") is emitted.
+- Inside `$...$`: math is preserved verbatim, so the literal
+  `\texorpdfstring{...}{...}` source rides along with the surrounding MathSpan.
+
+See src/arxiv_md/tex/transform/inline.py::TexOrPdfStringHandler.

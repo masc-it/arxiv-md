@@ -1,0 +1,2 @@
+Source: 2508.21085 main.tex.
+Construct: align*/align env preserved inside $$ ... $$ block.

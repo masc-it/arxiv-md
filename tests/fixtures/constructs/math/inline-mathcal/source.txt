@@ -1,0 +1,4 @@
+Source: typical ML / learning-theory phrasing.
+Construct: \mathcal{X}, \mathcal{F} inside $...$ — preserved as TeX rather
+than unicode-rendered, since calligraphic font has no clean ASCII fallback
+(`\mathcal{X}` collapsing to `X` is indistinguishable from a plain variable).

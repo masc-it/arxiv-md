@@ -1,0 +1,68 @@
+[project]
+name = "arxiv-md"
+version = "0.1.0"
+description = "Convert arXiv TeX sources to Markdown"
+readme = "README.md"
+authors = [
+    { name = "Mauro Sciancalepore", email = "maurosciancalepore98@gmail.com" }
+]
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing :: Markup",
+    "Topic :: Text Processing :: Markup :: LaTeX",
+    "Topic :: Text Processing :: Markup :: Markdown",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+assets = [
+    "pillow>=10.0.0",
+    "pypdfium2>=4.30.0",
+]
+
+[dependency-groups]
+dev = [
+    "deptry>=0.25.1",
+    "hypothesis>=6",
+    "mypy>=1.20.2",
+    "pre-commit>=4.6.0",
+    "pytest>=8",
+    "pillow>=10.0.0",
+    "pypdfium2>=4.30.0",
+    "pytest-cov>=7.1.0",
+    "radon>=6.0.1",
+    "ruff>=0.8",
+    "vulture>=2.16",
+    "xenon>=0.9.3",
+]
+
+[project.scripts]
+arxiv-to-md = "arxiv_md.arxiv_to_md:main"
+tex-to-md = "arxiv_md.tex.convert:main"
+tex-ast = "arxiv_md.tex.dump_ast:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: regression / perf, opt-in via --runslow",
+    "architecture: source-scan lint, opt-in via --runarchitecture",
+]
+
+[tool.deptry]
+known_first_party = ["arxiv_md"]
+
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"

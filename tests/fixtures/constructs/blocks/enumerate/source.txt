@@ -1,0 +1,2 @@
+Source: paraphrased ML pipeline pattern.
+Construct: enumerate env → ordered markdown list (1./2./3.).

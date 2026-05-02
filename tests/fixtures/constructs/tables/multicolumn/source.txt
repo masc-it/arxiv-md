@@ -1,0 +1,2 @@
+Source: 126 \multicolumn occurrences across the 5-paper corpus — most common table modifier.
+Construct: \multicolumn{2}{c}{X} → <td colspan="2" style="text-align:center">X</td>; leading bare & produces empty <td></td>.

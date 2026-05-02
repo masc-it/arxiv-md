@@ -1,0 +1,21 @@
+Hand-crafted fixture for ARX-CONSTRUCTS-363.
+
+Covers macros flagged unsafe by `_unsafe_macro_body` in
+`src/arxiv_md/tex/macros.py` (here: body uses `\csname ... \endcsname`,
+which is in the unsafe-token regex alongside `\if...`, `\catcode`,
+`\write`, `\input`, `\include`).
+
+Behavior locked by this fixture:
+- `\lookup` is NOT installed in the macro table.
+- Each call site falls back through `UnknownCommandHandler` in
+  `src/arxiv_md/tex/transform/inline.py`, which emits the mandatory
+  argument's children as plain text. No expansion of the unsafe body.
+- A `macro_expansion_skipped` warning is produced ("Unsafe macro
+  preserved: \\lookup"). Warning shape itself is asserted in
+  property / typed-error tests; this fixture just locks the fallback
+  render so refactors of the macro engine notice if the fallback
+  output drifts.
+
+Expected markdown:
+- `\lookup{alpha}` -> `alpha`
+- `\lookup{beta-gamma}` -> `beta-gamma`

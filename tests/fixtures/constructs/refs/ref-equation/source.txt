@@ -1,0 +1,5 @@
+Source: ubiquitous in ML papers (\ref to equation label).
+Construct: \ref{eq:foo} → "eq:foo" plain text fallback (no number resolution
+in fragment context). ~ → space.
+Note: a numbered alternative is acceptable if the renderer resolves labels;
+this fixture pins the bare-key fallback path.

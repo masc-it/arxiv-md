@@ -1,0 +1,3 @@
+Source: every paper has comments.
+Construct: % comments are stripped; a trailing % on a non-blank line joins
+the next line with no space (TeX rule).

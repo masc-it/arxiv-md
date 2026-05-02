@@ -1,0 +1,3 @@
+Source: 1810.04805 ablation.tex — Section~\ref{...} pattern.
+Construct: ~ (TeX non-breaking space) renders as a regular space; \ref
+key falls through as plain text (see refs/ref-equation).

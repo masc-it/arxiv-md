@@ -1,0 +1,3 @@
+Source: 1810.04805 main.tex — \newcommand{\bert}{BERT} used throughout.
+Construct: zero-arg user macro expansion. \bert\ and \bert{} both expand
+to BERT and absorb the trailing token-spacing trick.

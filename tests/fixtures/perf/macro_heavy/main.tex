@@ -1,0 +1,132 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+
+% --- Macro-heavy preamble ---
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vy}{\mathbf{y}}
+\newcommand{\vz}{\mathbf{z}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\mA}{\mathbf{A}}
+\newcommand{\mB}{\mathbf{B}}
+\newcommand{\mW}{\mathbf{W}}
+\newcommand{\mH}{\mathbf{H}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\expect}{\mathbb{E}}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\loss}{\mathcal{L}}
+\newcommand{\dataset}{\mathcal{D}}
+\newcommand{\model}{\mathcal{M}}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\inner}[2]{\langle #1, #2 \rangle}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\ceil}[1]{\lceil #1 \rceil}
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
+\newcommand{\argmin}{\operatorname{argmin}}
+\newcommand{\argmax}{\operatorname{argmax}}
+\newcommand{\softmax}{\operatorname{softmax}}
+\newcommand{\relu}{\operatorname{ReLU}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\DeclareMathOperator{\KL}{KL}
+\newcommand{\dkl}[2]{\KL\left(#1 \,\|\, #2\right)}
+
+\title{Macro-Heavy Benchmark: Neural Architecture Convergence}
+\author{Charlie Macro \and Dana Dense}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study the convergence of overparameterized neural networks in $\real^d$.
+Our analysis leverages the neural tangent kernel $\mH$ to establish
+that gradient descent on the empirical loss $\loss(\vw)$ converges to a
+global minimum at rate $O(1/t)$ when $\norm{\vw_0 - \vw^*} \leq R$.
+\end{abstract}
+
+\section{Introduction}
+
+Let $\dataset = \{(\vx_i, \vy_i)\}_{i=1}^n$ with $\vx_i \in \real^d$
+and $\vy_i \in \real$.  We consider a two-layer network
+$f(\vx; \mW) = \mA \relu(\mW \vx)$ where $\mW \in \real^{m \times d}$
+and $\mA \in \real^{1 \times m}$.
+
+The empirical loss is:
+\[
+\loss(\mW) = \frac{1}{2n} \sum_{i=1}^n \norm{f(\vx_i; \mW) - \vy_i}^2
+\]
+
+We define the NTK matrix $\mH \in \real^{n \times n}$ by:
+\[
+\mH_{ij} = \inner{\nabla_{\mW} f(\vx_i; \mW)}{\nabla_{\mW} f(\vx_j; \mW)}
+\]
+
+\section{Assumptions and Setup}
+
+\begin{enumerate}
+\item The data satisfies $\norm{\vx_i} = 1$ for all $i$ and $\abs{\vy_i} \leq B$.
+\item The width satisfies $m \geq \ceil{n^6 / \lambda_0^4}$ where $\lambda_0 = \lambda_{\min}(\mH^{(0)}) > 0$.
+\item Initialization: $\mW^{(0)}_{jk} \sim \mathcal{N}(0, 2/m)$ for all $j, k$.
+\end{enumerate}
+
+Under these conditions, the expected loss decomposes as:
+\[
+\expect[\loss(\mW^{(t)})] = \expect[\loss(\mW^{(0)})] \cdot \left(1 - \frac{\eta \lambda_0}{2}\right)^t + \frac{\eta \sigma^2}{2 \lambda_0}
+\]
+
+The gradient update is:
+\[
+\mW^{(t+1)} = \mW^{(t)} - \eta \nabla_{\mW} \loss(\mW^{(t)})
+\]
+
+\section{Main Theorems}
+
+\begin{theorem}[Linear convergence]
+\label{thm:linear}
+Under Assumptions 1--3, gradient descent with $\eta \leq 2 / \norm{\mH^{(0)}}$ satisfies:
+\[
+\norm{\vy - f(\mW^{(t)})}^2 \leq \left(1 - \frac{\eta \lambda_0}{2}\right)^t \norm{\vy - f(\mW^{(0)})}^2
+\]
+where $f(\mW)_i = f(\vx_i; \mW)$.
+\end{theorem}
+
+\begin{proof}
+Define $\vz^{(t)} = \vy - f(\mW^{(t)})$.  By Taylor expansion around $\mW^{(t)}$:
+\begin{align}
+\norm{\vz^{(t+1)}}^2
+&= \norm{\vz^{(t)} - \eta \mH^{(t)} \vz^{(t)}}^2 \\
+&= \norm{(\mA - \eta \mH^{(t)}) \vz^{(t)}}^2 \\
+&\leq \left(1 - \eta \lambda_0\right)^2 \norm{\vz^{(t)}}^2 \\
+&\leq \left(1 - \frac{\eta \lambda_0}{2}\right) \norm{\vz^{(t)}}^2
+\end{align}
+where $\mA = \mB - \diag(\tr(\mH))$ and the last step uses $\eta \leq 2/\norm{\mH}$.
+Telescoping completes the proof.
+\end{proof}
+
+\begin{lemma}[Kernel stability]
+\label{lem:kernel}
+For $m \geq \ceil{n^6 / \lambda_0^4}$, the kernel matrix satisfies
+$\norm{\mH^{(t)} - \mH^{(0)}} \leq \lambda_0 / 4$ for all $t \leq T$.
+\end{lemma}
+
+\section{KL Divergence Bound}
+
+For generalization we bound the $\dkl{\prob_{\model}}{\prob_{\dataset}}$:
+\[
+\dkl{\prob_{\model}}{\prob_{\dataset}}
+\leq \frac{1}{2\sigma^2} \sum_{i=1}^n \norm{f(\vx_i; \mW^*) - \vy_i}^2 + \frac{d}{2} \log\frac{\sigma^2}{\sigma_0^2}
+\]
+
+The optimal parameters are $\vw^* = \argmin_{\vw \in \real^d} \loss(\vw)$
+and the predictive distribution uses $\softmax$ for classification tasks.
+
+The floor function $\floor{m / n}$ gives the effective overparameterization
+ratio and we need $\floor{m/n} \geq n^5$.
+
+See Theorem~\ref{thm:linear} and Lemma~\ref{lem:kernel}.
+
+\section{Conclusion}
+
+We showed linear convergence for overparameterized networks with
+width $m = O(n^6 / \lambda_0^4)$.  The analysis extends to $\argmax$
+objectives and deeper architectures via recursive NTK computation.
+
+\end{document}

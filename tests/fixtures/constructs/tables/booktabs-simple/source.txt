@@ -1,0 +1,2 @@
+Source: 1810.04805 (BERT) main.tex — booktabs is the standard modern style.
+Construct: \toprule/\midrule/\bottomrule should be suppressed (no border markup); column align `lcc` → text-align center for c columns.

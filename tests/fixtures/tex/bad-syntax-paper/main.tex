@@ -1,0 +1,26 @@
+\documentclass{article}
+\title{Bad Syntax Paper}
+\author{Anon}
+\begin{document}
+\maketitle
+\begin{abstract}
+Fixture for parser recovery: unknown command, unknown environment, mismatched braces, and an unclosed environment.
+\end{abstract}
+
+\section{Unknown command}
+This paragraph invokes \totallyMadeUpCommand{with an arg} that no preamble defines.
+And a starred sibling \alsoUnknown*[opt]{arg} for good measure.
+
+\section{Unknown environment}
+\begin{frobinator}
+Some content inside an environment the parser does not know.
+\end{frobinator}
+
+\section{Recoverable text}
+Stray close brace } in running text, plus \emph{partial italics with no closer.
+
+\section{Unclosed itemize}
+\begin{itemize}
+\item First item.
+\item Second item, environment intentionally not closed.
+\end{document}

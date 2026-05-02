@@ -1,0 +1,6 @@
+Source: 106 \mathbf hits in 5-paper corpus (vector notation).
+Construct: \mathbf has no unicode-bold for arbitrary chars → preserve as TeX
+within a math span that needs it. The simple span $x_i$ unicode-renders
+to x<sub>i</sub> (consistent with rich-table-paper convention).
+Bug-finder: catches the same lossy-collapse pattern as \mathbb (ARX-330).
+If \mathbf{x} → bare x, that's a real bug.

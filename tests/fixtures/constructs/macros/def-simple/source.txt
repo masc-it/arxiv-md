@@ -1,0 +1,8 @@
+Hand-crafted fixture for ARX-CONSTRUCTS-361.
+
+Covers plain TeX `\def\foo#1{[#1]}` macro definition and expansion at multiple
+call sites in body text. Confirms the macro engine handles `\def` (not just
+`\newcommand`) with a single mandatory argument and parameter substitution
+(`#1`).
+
+See src/arxiv_md/tex/macros.py.

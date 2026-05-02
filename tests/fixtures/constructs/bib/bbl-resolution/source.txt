@@ -1,0 +1,15 @@
+Hand-crafted fixture for ARX-CONSTRUCTS-367.
+
+Covers `\cite{key}` resolved against a sibling `refs.bbl` containing a
+`thebibliography` env. The construct test runner detects auxiliary files
+(anything beyond input.tex/preamble.tex/expected.md/source.txt) and falls
+back to `convert_path` against a tmp workdir so .bbl scanning at root_dir
+can run.
+
+Asserts:
+- Inline `\cite{...}` renders as `[@key]` (existing CitationSpan behavior).
+- Bibliography section "## References" emitted with one bullet per resolved
+  bib entry, text taken from the `\bibitem` body in refs.bbl.
+
+See src/arxiv_md/tex/bibliography.py::parse_bibliography (file-scan branch)
+and src/arxiv_md/tex/rendering.py::_render_bib.

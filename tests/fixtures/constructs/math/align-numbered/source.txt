@@ -1,0 +1,2 @@
+Synthetic. Sibling of math/align for the numbered align env (RENDERBUGS-329).
+Construct: align env preserved inside $$ ... $$ block.

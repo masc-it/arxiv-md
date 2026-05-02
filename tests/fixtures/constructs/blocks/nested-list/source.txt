@@ -1,0 +1,2 @@
+Source: synthetic minimal nesting.
+Construct: nested itemize → 2-space indented sub-list (CommonMark).

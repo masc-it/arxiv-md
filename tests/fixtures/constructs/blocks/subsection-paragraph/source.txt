@@ -1,0 +1,2 @@
+Source: 1810.04805 — \paragraph{X.} runs inline as bold lead-in.
+Construct: heading depth + paragraph-as-bold-lead-in pattern.

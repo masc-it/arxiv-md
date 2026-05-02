@@ -1,0 +1,164 @@
+\documentclass{article}
+\usepackage{booktabs,multirow}
+\title{Table-Heavy Benchmark: Model Comparison Study}
+\author{Eve Tables}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Comprehensive evaluation of 12 methods across 5 datasets with multiple metrics.
+\end{abstract}
+
+\section{Datasets}
+
+We evaluate on CIFAR-10, CIFAR-100, ImageNet, SVHN, and STL-10.
+
+\section{Main Results}
+
+\begin{table}[h]
+\caption{Classification accuracy (\%) on standard benchmarks.}
+\label{tab:main}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Method} & \textbf{CIFAR-10} & \textbf{CIFAR-100} & \textbf{ImageNet} & \textbf{SVHN} & \textbf{STL-10} \\
+\midrule
+ResNet-18       & 95.2 & 77.3 & 69.8 & 96.5 & 87.3 \\
+ResNet-50       & 96.1 & 79.2 & 76.1 & 97.0 & 89.1 \\
+ResNet-101      & 96.4 & 80.1 & 77.4 & 97.2 & 89.8 \\
+DenseNet-121    & 95.8 & 78.5 & 74.4 & 96.8 & 88.4 \\
+DenseNet-169    & 96.0 & 79.0 & 75.9 & 97.1 & 89.0 \\
+WideResNet-28-10 & 96.7 & 81.0 & --- & 97.3 & 90.2 \\
+VGG-16          & 93.6 & 74.0 & 71.6 & 95.8 & 85.1 \\
+EfficientNet-B0 & 96.3 & 80.5 & 77.1 & 97.1 & 89.5 \\
+EfficientNet-B3 & 97.0 & 82.1 & 81.6 & 97.5 & 91.2 \\
+ViT-B/16        & 97.2 & 83.0 & 81.1 & 97.4 & 91.5 \\
+ViT-L/16        & \textbf{97.8} & \textbf{85.2} & \textbf{85.0} & \textbf{97.8} & \textbf{93.0} \\
+MLP-Mixer       & 96.0 & 79.8 & 76.4 & 96.9 & 88.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{Training cost comparison.}
+\label{tab:cost}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Method} & \textbf{Params (M)} & \textbf{FLOPs (G)} & \textbf{Train time (h)} & \textbf{GPU mem (GB)} \\
+\midrule
+ResNet-18       & 11.7  & 1.8  & 2.4  & 3.2 \\
+ResNet-50       & 25.6  & 4.1  & 5.1  & 5.8 \\
+ResNet-101      & 44.5  & 7.8  & 8.3  & 8.4 \\
+DenseNet-121    & 8.0   & 2.9  & 3.8  & 6.1 \\
+DenseNet-169    & 14.2  & 3.4  & 5.0  & 7.2 \\
+WideResNet-28-10 & 36.5 & 5.2  & 6.7  & 7.8 \\
+VGG-16          & 138.4 & 15.5 & 4.2  & 4.8 \\
+EfficientNet-B0 & 5.3   & 0.4  & 3.1  & 2.8 \\
+EfficientNet-B3 & 12.0  & 1.8  & 6.2  & 5.5 \\
+ViT-B/16        & 86.6  & 17.6 & 12.5 & 9.2 \\
+ViT-L/16        & 304.3 & 61.6 & 48.0 & 24.1 \\
+MLP-Mixer       & 59.9  & 12.6 & 8.8  & 7.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{Per-dataset \emph{F1 scores} (macro-averaged).}
+\label{tab:f1}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Method} & \textbf{CIFAR-10} & \textbf{CIFAR-100} & \textbf{ImageNet} & \textbf{SVHN} & \textbf{STL-10} \\
+\midrule
+ResNet-18       & 0.951 & 0.771 & 0.695 & 0.964 & 0.871 \\
+ResNet-50       & 0.960 & 0.790 & 0.759 & 0.969 & 0.889 \\
+ResNet-101      & 0.963 & 0.799 & 0.772 & 0.971 & 0.896 \\
+DenseNet-121    & 0.957 & 0.783 & 0.742 & 0.967 & 0.882 \\
+WideResNet-28-10 & 0.966 & 0.808 & ---   & 0.972 & 0.900 \\
+VGG-16          & 0.935 & 0.738 & 0.714 & 0.957 & 0.849 \\
+EfficientNet-B0 & 0.962 & 0.803 & 0.769 & 0.970 & 0.893 \\
+EfficientNet-B3 & 0.969 & 0.819 & 0.814 & 0.974 & 0.910 \\
+ViT-B/16        & 0.971 & 0.828 & 0.809 & 0.973 & 0.913 \\
+ViT-L/16        & \textbf{0.977} & \textbf{0.850} & \textbf{0.848} & \textbf{0.977} & \textbf{0.928} \\
+MLP-Mixer       & 0.959 & 0.796 & 0.762 & 0.968 & 0.887 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{Robustness evaluation: accuracy under corruption (severity 3).}
+\label{tab:robust}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method} & \textbf{Gaussian noise} & \textbf{Shot noise} & \textbf{Impulse} & \textbf{Mean} \\
+\midrule
+ResNet-18       & 72.1 & 74.5 & 69.8 & 72.1 \\
+ResNet-50       & 76.3 & 78.0 & 73.9 & 76.1 \\
+ResNet-101      & 77.8 & 79.2 & 75.4 & 77.5 \\
+DenseNet-121    & 74.9 & 76.8 & 72.5 & 74.7 \\
+WideResNet-28-10 & 79.2 & 80.5 & 77.1 & 78.9 \\
+VGG-16          & 68.3 & 71.0 & 65.9 & 68.4 \\
+EfficientNet-B0 & 77.5 & 79.1 & 74.8 & 77.1 \\
+EfficientNet-B3 & 80.1 & 81.5 & 78.2 & 79.9 \\
+ViT-B/16        & 82.3 & 83.1 & 80.0 & 81.8 \\
+ViT-L/16        & \textbf{85.0} & \textbf{86.1} & \textbf{83.2} & \textbf{84.8} \\
+MLP-Mixer       & 76.8 & 78.3 & 74.0 & 76.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{Transfer learning accuracy (\%) from ImageNet pre-training.}
+\label{tab:transfer}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Method} & \textbf{Flowers} & \textbf{Pets} & \textbf{Cars} & \textbf{Aircraft} & \textbf{Food} \\
+\midrule
+ResNet-50       & 92.1 & 91.5 & 89.3 & 78.2 & 85.6 \\
+DenseNet-121    & 91.5 & 90.8 & 88.1 & 76.5 & 84.2 \\
+EfficientNet-B0 & 93.2 & 92.1 & 90.5 & 80.1 & 86.8 \\
+EfficientNet-B3 & 95.0 & 94.3 & 93.1 & 84.5 & 89.7 \\
+ViT-B/16        & 95.8 & 94.8 & 93.8 & 85.2 & 90.5 \\
+ViT-L/16        & \textbf{97.2} & \textbf{96.5} & \textbf{95.8} & \textbf{89.0} & \textbf{93.1} \\
+MLP-Mixer       & 93.5 & 92.0 & 90.8 & 80.8 & 87.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{Ablation: effect of data augmentation on CIFAR-100 accuracy.}
+\label{tab:ablation}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method} & \textbf{None} & \textbf{Flip+Crop} & \textbf{+CutOut} & \textbf{+AutoAug} \\
+\midrule
+ResNet-50       & 74.8 & 77.5 & 78.9 & 79.2 \\
+WideResNet-28-10 & 76.2 & 79.3 & 80.5 & 81.0 \\
+EfficientNet-B3 & 78.1 & 80.8 & 81.5 & 82.1 \\
+ViT-B/16        & 77.5 & 81.2 & 82.5 & 83.0 \\
+ViT-L/16        & 80.0 & 83.5 & 84.5 & 85.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Analysis}
+
+Table~\ref{tab:main} shows ViT-L/16 achieves the best accuracy across all benchmarks.
+Table~\ref{tab:cost} reveals the computational cost: ViT-L/16 requires
+48 GPU-hours for training vs.\ 2.4 for ResNet-18.
+Table~\ref{tab:f1} confirms the F1 trend mirrors accuracy.
+Table~\ref{tab:robust} demonstrates that vision transformers are more robust
+to input corruptions, with ViT-L/16 leading by $+6.4$ points over ResNet-50.
+Tables~\ref{tab:transfer} and~\ref{tab:ablation} show transfer learning and
+data augmentation results, respectively.
+
+\section{Conclusion}
+
+ViT-L/16 dominates all metrics but at $10\times$ the compute cost of EfficientNet-B0.
+EfficientNet-B3 offers the best accuracy-to-cost tradeoff.
+
+\end{document}

@@ -1,0 +1,2 @@
+Source: 1810.04805 intro.tex contributions list.
+Construct: itemize env → unordered markdown list.

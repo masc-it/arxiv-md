@@ -1,0 +1,2 @@
+Source: 1810.04805 intro.tex line 2.
+Construct: \section{X} → ## X (level 2; level 1 reserved for \title).

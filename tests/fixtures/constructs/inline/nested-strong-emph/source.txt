@@ -1,0 +1,2 @@
+Source: synthetic, common pattern.
+Construct: nested \textbf{\emph{x}} → ***x*** (CommonMark canonical form).

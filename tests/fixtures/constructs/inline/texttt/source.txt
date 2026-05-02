@@ -1,0 +1,2 @@
+Source: 2305.14314 (QLoRA) — frequent monospaced identifier rendering.
+Construct: \texttt{x\_y} → `x_y` (escaped underscore unwraps inside code)

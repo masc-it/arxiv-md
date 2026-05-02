@@ -1,0 +1,35 @@
+\documentclass{article}
+\title{Figure Heavy Paper}
+\author{Marie Curie}
+\begin{document}
+\maketitle
+\begin{abstract}
+Paper exercising figure resolution and asset copy with multiple graphics.
+\end{abstract}
+
+\section{Overview}
+We present three figures.
+
+\begin{figure}
+\centering
+\includegraphics{images/fig1.png}
+\caption{First figure with explicit extension.}
+\label{fig:first}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{images/fig2}
+\caption{Second figure resolved without an extension.}
+\label{fig:second}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{fig3.png}
+\caption{Third figure resolved by name search across the source tree.}
+\label{fig:third}
+\end{figure}
+
+See Figures~\ref{fig:first}, \ref{fig:second}, and \ref{fig:third}.
+\end{document}

@@ -1,0 +1,6 @@
+Source: ML papers everywhere (sum over training set, with bounds).
+Construct: \sum with multi-char sub _{i=1} and sup ^{n} alongside \mathcal,
+\hat — preserve whole span as TeX.
+Bug-finder: tests the multi-char sub/sup case where the modifier-letter
+trick (^d → ᵈ) breaks down. If converter emits e.g. "∑ᵢ₌₁ⁿ ..." that's
+fragile; if it emits "<sub>i=1</sub>" that's robust.

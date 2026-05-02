@@ -1,0 +1,74 @@
+\documentclass{article}
+\title{Simple Benchmark Paper}
+\author{Alice Author \and Bob Benchmarker}
+\begin{document}
+\maketitle
+\begin{abstract}
+A minimal paper with basic sections, inline math, and citations.
+This exercises the core pipeline without heavy features.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Machine learning has achieved remarkable results in recent years.
+Deep neural networks~\cite{lecun2015deep} have become the dominant
+paradigm for supervised learning tasks.  In this work we study the
+convergence properties of stochastic gradient descent (SGD) applied
+to non-convex loss surfaces.
+
+The main contributions are:
+\begin{itemize}
+\item A new bound on the expected loss after $T$ iterations.
+\item Empirical validation on CIFAR-10 and ImageNet.
+\item An open-source implementation in PyTorch.
+\end{itemize}
+
+\section{Background}
+\label{sec:background}
+
+Let $f: \mathbb{R}^d \to \mathbb{R}$ be a differentiable loss function.
+SGD updates the parameter vector $\theta_t$ at step $t$ via:
+\[
+\theta_{t+1} = \theta_t - \eta_t \nabla f(\theta_t; \xi_t)
+\]
+where $\eta_t > 0$ is the learning rate and $\xi_t$ is a mini-batch
+sampled uniformly from the training set.
+
+We assume the following standard conditions:
+\begin{enumerate}
+\item \textbf{Lipschitz gradients:} $\|\nabla f(x) - \nabla f(y)\| \leq L\|x - y\|$ for all $x, y$.
+\item \textbf{Bounded variance:} $\mathbb{E}[\|\nabla f(\theta; \xi) - \nabla f(\theta)\|^2] \leq \sigma^2$.
+\item \textbf{Lower-bounded loss:} $f(\theta) \geq f^*$ for all $\theta$.
+\end{enumerate}
+
+\section{Main Result}
+\label{sec:main}
+
+\begin{theorem}
+\label{thm:convergence}
+Under conditions (1)--(3), SGD with step size $\eta_t = \eta / \sqrt{T}$ satisfies:
+\[
+\frac{1}{T} \sum_{t=0}^{T-1} \mathbb{E}[\|\nabla f(\theta_t)\|^2]
+\leq \frac{2(f(\theta_0) - f^*)}{\eta \sqrt{T}} + \frac{L \eta \sigma^2}{\sqrt{T}}
+\]
+\end{theorem}
+
+\begin{proof}
+By the $L$-smoothness assumption we have $f(\theta_{t+1}) \leq f(\theta_t)
++ \langle \nabla f(\theta_t), \theta_{t+1} - \theta_t \rangle
++ \frac{L}{2}\|\theta_{t+1} - \theta_t\|^2$.  Substituting the SGD update
+and taking expectations yields the result after telescoping.
+\end{proof}
+
+See Theorem~\ref{thm:convergence} and Section~\ref{sec:background} for details.
+
+\section{Conclusion}
+
+We proved a $O(1/\sqrt{T})$ convergence rate for SGD on smooth non-convex
+objectives.  Future work includes extending to Adam~\cite{kingma2014adam}
+and investigating the effect of momentum.
+
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}

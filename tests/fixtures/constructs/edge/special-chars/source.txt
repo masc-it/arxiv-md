@@ -1,0 +1,8 @@
+Source: every paper has at least \% and \&; \_ in identifiers like
+"learning\_rate" is universal.
+Construct: \$ \% \# \_ \& escapes → literal character in markdown.
+Note: bare $ # _ are technically markdown-significant in some positions
+but CommonMark only treats them as syntax in restricted contexts (e.g.
+# only at start-of-line, _ only between non-word chars). Inline literal
+output is the right answer.
+Bug-finder: classic source of escape bugs (\$ → \\$, \_ → backslash-underscore).

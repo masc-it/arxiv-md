@@ -1,0 +1,14 @@
+# arXiv IDs for TeX-to-Markdown probe/corpus smoke tests
+# Keep generic: varied venues/styles, no paper-specific converter rules.
+
+2010.11929v2
+2604.12012v1
+2604.18486v1
+1706.03762
+2103.00020
+2305.14314
+1810.04805
+1512.03385
+1409.1556
+2005.14165
+2203.15556

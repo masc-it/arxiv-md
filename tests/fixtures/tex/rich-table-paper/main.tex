@@ -1,0 +1,16 @@
+\documentclass{article}
+\title{Rich Table Paper}
+\begin{document}
+\maketitle
+\section{Results}
+\begin{table}
+\caption{Rich cells}
+\begin{tabular}{lll}
+\textbf{A} & \emph{em} & \texttt{code} \\
+$\alpha + \beta$ & $x_y$ & \cite{einstein} \\
+\cite{a,b} & \href{https://x.test}{site} & \url{https://y.test} \\
+\multicolumn{2}{c}{wide} & 1 < 2 \\
+\end{tabular}
+\end{table}
+\bibliography{refs}
+\end{document}

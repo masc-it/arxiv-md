@@ -1,0 +1,12 @@
+Hand-crafted fixture for ARX-CONSTRUCTS-352.
+
+Covers:
+- `\newtheorem`-declared theorem and lemma sharing the global theorem counter.
+- Optional `[Main]` annotation rendered as parenthesized title suffix.
+- Plain `proof` env: unnumbered, gets ∎ appended.
+- `\label` inside theorem-like envs (currently not surfaced in markdown output;
+  preserved as QuoteBlock.label internally).
+
+QuoteBlock admonitions render as `> **Title.** body` blockquotes per
+src/arxiv_md/tex/rendering.py::_render_quote and the numbering rules in
+src/arxiv_md/tex/transform/handlers/theorems.py.

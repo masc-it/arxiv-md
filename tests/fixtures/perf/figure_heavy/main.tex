@@ -1,0 +1,163 @@
+\documentclass{article}
+\usepackage{graphicx,subcaption}
+\title{Figure-Heavy Benchmark: Visual Analysis}
+\author{Frank Figures}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Paper exercising figure resolution, subfigures, cross-references,
+and caption parsing.  All asset paths are synthetic and will trigger
+\texttt{figure\_missing} warnings when run with \texttt{--no-assets},
+which is the intended perf benchmark mode.
+\end{abstract}
+
+\section{Architecture Overview}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/architecture_overview.pdf}
+\caption{High-level architecture of the proposed system.  The encoder
+  processes input tokens $x_1, \ldots, x_n$ and produces hidden states
+  $h_1, \ldots, h_n$.}
+\label{fig:arch}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/encoder_block.pdf}
+\caption{Encoder block detail.}
+\label{fig:encoder}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/decoder_block.pdf}
+\caption{Decoder block detail.}
+\label{fig:decoder}
+\end{subfigure}
+\caption{Transformer block internals.}
+\label{fig:blocks}
+\end{figure}
+
+\section{Attention Visualization}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/attention_heads.png}
+\caption{Attention weight matrices for heads 1--4 of layer 6.
+  Head 2 attends to syntactic dependencies while head 4 captures
+  positional patterns.}
+\label{fig:attention}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{figures/attn_layer1.png}
+\caption{Layer 1}
+\label{fig:attn1}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{figures/attn_layer6.png}
+\caption{Layer 6}
+\label{fig:attn6}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+\includegraphics[width=\textwidth]{figures/attn_layer12.png}
+\caption{Layer 12}
+\label{fig:attn12}
+\end{subfigure}
+\caption{Attention patterns across layers.}
+\label{fig:attn_layers}
+\end{figure}
+
+\section{Training Curves}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/loss_curve.pdf}
+\caption{Training and validation loss over 100 epochs.  The model
+  converges after approximately 60 epochs with early stopping
+  patience of 10.}
+\label{fig:loss}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/lr_schedule.pdf}
+\caption{Learning rate schedule (cosine annealing with warmup).}
+\label{fig:lr}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+\includegraphics[width=\textwidth]{figures/gradient_norm.pdf}
+\caption{Gradient norm during training.}
+\label{fig:grad}
+\end{subfigure}
+\caption{Training dynamics.}
+\label{fig:dynamics}
+\end{figure}
+
+\section{Qualitative Results}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figures/qualitative_grid.png}
+\caption{Qualitative comparison of outputs.  Row 1: input images.
+  Row 2: ground truth.  Row 3: our method.  Row 4: baseline.}
+\label{fig:qual}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.24\textwidth}
+\includegraphics[width=\textwidth]{figures/sample_a.png}
+\caption{Sample A}
+\label{fig:sa}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.24\textwidth}
+\includegraphics[width=\textwidth]{figures/sample_b.png}
+\caption{Sample B}
+\label{fig:sb}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.24\textwidth}
+\includegraphics[width=\textwidth]{figures/sample_c.png}
+\caption{Sample C}
+\label{fig:sc}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.24\textwidth}
+\includegraphics[width=\textwidth]{figures/sample_d.png}
+\caption{Sample D}
+\label{fig:sd}
+\end{subfigure}
+\caption{Individual sample outputs.}
+\label{fig:samples}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/failure_cases.png}
+\caption{Failure cases.  The model struggles with (a) heavily occluded
+  objects, (b) rare categories, and (c) extreme lighting conditions.}
+\label{fig:failures}
+\end{figure}
+
+\section{Cross-Reference Summary}
+
+Our architecture (Figure~\ref{fig:arch}) consists of encoder
+(Figure~\ref{fig:encoder}) and decoder (Figure~\ref{fig:decoder}) blocks.
+Attention visualizations in Figures~\ref{fig:attention}
+and~\ref{fig:attn_layers} reveal interpretable patterns.
+Training curves (Figure~\ref{fig:loss}) and dynamics
+(Figure~\ref{fig:dynamics}) show stable convergence.
+Qualitative results appear in Figures~\ref{fig:qual}
+and~\ref{fig:samples}, with failure analysis in Figure~\ref{fig:failures}.
+
+\end{document}

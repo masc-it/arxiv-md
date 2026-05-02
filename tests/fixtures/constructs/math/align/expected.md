@@ -1,0 +1,6 @@
+$$
+\begin{align*}
+y &= mx + b \\
+z &= ay + c.
+\end{align*}
+$$

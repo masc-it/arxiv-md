@@ -1,0 +1,2 @@
+Source: 1810.04805 — \citep{vaswani-etal:2017:_atten} pattern.
+Construct: \citep{key} → [@key] (pandoc citation, simple-paper convention).
