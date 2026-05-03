@@ -36,7 +36,7 @@ from arxiv_md.tex.model import (
     SuperscriptSpan,
     TextSpan,
 )
-from arxiv_md.tex.transform.math_text import _math_to_text
+from arxiv_md.tex.transform.math_text import KNOWN_MATH_COMMANDS, _math_to_text
 
 
 __all__ = [
@@ -996,6 +996,8 @@ class InlineEngine:
         if name in IGNORED_INLINE_COMMANDS or name in KNOWN_INLINE_COMMANDS:
             return
         if not name or name.startswith("@"):
+            return
+        if name in KNOWN_MATH_COMMANDS:
             return
         key = f"\\{name}"
         self.diag.unknown_command_counts[key] = (

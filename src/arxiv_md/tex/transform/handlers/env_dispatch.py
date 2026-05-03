@@ -21,6 +21,24 @@ MATH_ENVS: frozenset[str] = frozenset(
         "displaymath",
         "eqnarray",
         "eqnarray*",
+        # amsmath matrix / cases environments (may appear at top level)
+        "matrix",
+        "matrix*",
+        "pmatrix",
+        "pmatrix*",
+        "bmatrix",
+        "bmatrix*",
+        "Bmatrix",
+        "Bmatrix*",
+        "vmatrix",
+        "vmatrix*",
+        "Vmatrix",
+        "Vmatrix*",
+        "smallmatrix",
+        "cases",
+        "cases*",
+        "dcases",
+        "dcases*",
     }
 )
 

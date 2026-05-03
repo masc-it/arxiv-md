@@ -41,6 +41,21 @@ _MATH_ENV_WRAPPER: dict[str, str] = {
     "multline*": "multline*",
 }
 
+# Inner-math environments that always need wrapping when at top level
+_MATH_ENV_SELF_WRAP: frozenset[str] = frozenset(
+    {
+        "matrix", "matrix*",
+        "pmatrix", "pmatrix*",
+        "bmatrix", "bmatrix*",
+        "Bmatrix", "Bmatrix*",
+        "vmatrix", "vmatrix*",
+        "Vmatrix", "Vmatrix*",
+        "smallmatrix",
+        "cases", "cases*",
+        "dcases", "dcases*",
+    }
+)
+
 
 def render_document_markdown(document: TexDocument) -> str:
     parts: list[str] = []
@@ -74,9 +89,14 @@ def _render_paragraph(block: Paragraph) -> str:
 
 def _render_math(block: MathBlock) -> str:
     body = block.text.strip()
-    wrapper = _MATH_ENV_WRAPPER.get(block.env or "")
-    if wrapper is not None and ("&" in body or "\\\\" in body):
-        body = f"\\begin{{{wrapper}}}\n{body}\n\\end{{{wrapper}}}"
+    env = block.env or ""
+    # Inner-math envs (matrix, cases) always need their own begin/end wrapper
+    if env in _MATH_ENV_SELF_WRAP:
+        body = f"\\begin{{{env}}}\n{body}\n\\end{{{env}}}"
+    else:
+        wrapper = _MATH_ENV_WRAPPER.get(env)
+        if wrapper is not None and ("&" in body or "\\\\" in body):
+            body = f"\\begin{{{wrapper}}}\n{body}\n\\end{{{wrapper}}}"
     return f"$$\n{body}\n$$"
 
 

@@ -1010,3 +1010,135 @@ def _read_script_command_argument(body: str, pos: int) -> tuple[str | None, int]
     if end is None:
         return None, pos
     return body[pos:end], end
+
+
+# ---------------------------------------------------------------------------
+# Exported set of all command names that are valid in math mode.
+# Used by the inline engine to suppress unknown-command counting for
+# commands that are legitimate math-mode TeX but have no text-mode handler.
+# ---------------------------------------------------------------------------
+
+_MATH_OPERATORS: frozenset[str] = frozenset(
+    {
+        "arccos",
+        "arcsin",
+        "arctan",
+        "arg",
+        "cos",
+        "cosh",
+        "cot",
+        "coth",
+        "csc",
+        "deg",
+        "det",
+        "dim",
+        "exp",
+        "gcd",
+        "hom",
+        "inf",
+        "ker",
+        "lg",
+        "lim",
+        "liminf",
+        "limsup",
+        "ln",
+        "log",
+        "max",
+        "min",
+        "Pr",
+        "sec",
+        "sin",
+        "sinh",
+        "sup",
+        "tan",
+        "tanh",
+    }
+)
+
+_MATH_EXTRA: frozenset[str] = frozenset(
+    {
+        # Delimiter sizing
+        "big",
+        "Big",
+        "bigg",
+        "Bigg",
+        "bigl",
+        "Bigl",
+        "biggl",
+        "Biggl",
+        "bigr",
+        "Bigr",
+        "biggr",
+        "Biggr",
+        "bigm",
+        "Bigm",
+        "biggm",
+        "Biggm",
+        # Over/under constructs
+        "underbrace",
+        "overbrace",
+        "underset",
+        "overset",
+        "stackrel",
+        "substack",
+        # Spacing
+        "mkern",
+        "mskip",
+        "kern",
+        "hskip",
+        "quad",
+        "qquad",
+        "thinspace",
+        "thickspace",
+        "negthinspace",
+        "negmedspace",
+        "negthickspace",
+        # Atom classification
+        "mathrel",
+        "mathop",
+        "mathbin",
+        "mathord",
+        "mathopen",
+        "mathclose",
+        "mathpunct",
+        "mathinner",
+        # Relations / symbols not in _MATH_UNICODE
+        "mid",
+        "nmid",
+        "parallel",
+        "nparallel",
+        "not",
+        # Operator variants
+        "operatornamewithlimits",
+        # Misc
+        "cal",
+        "mit",
+        "bmod",
+        "pmod",
+        "pod",
+        "mod",
+        # Stretchy delimiters handled by \left/\right
+        "lbrace",
+        "rbrace",
+        "lvert",
+        "rvert",
+        "lVert",
+        "rVert",
+        "backslash",
+        # Color in math
+        "color",
+        "textcolor",
+    }
+)
+
+KNOWN_MATH_COMMANDS: frozenset[str] = (
+    frozenset(_MATH_UNICODE.keys())
+    | _MATH_TEXT_DECLARATIONS
+    | _MATH_TEXT_WRAPPERS
+    | frozenset(_MATH_ACCENT_COMMANDS.keys())
+    | _MATH_LAYOUT_WRAPPERS
+    | _MATH_PHANTOM_COMMANDS
+    | _MATH_TEXT_LOSSY_WRAPPERS
+    | _MATH_OPERATORS
+    | _MATH_EXTRA
+)
