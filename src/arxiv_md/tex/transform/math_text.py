@@ -1142,3 +1142,20 @@ KNOWN_MATH_COMMANDS: frozenset[str] = (
     | _MATH_OPERATORS
     | _MATH_EXTRA
 )
+
+
+# TeX commands unsupported by KaTeX → compatible equivalents
+_KATEX_COMPAT: dict[str, str] = {
+    "mbox": "text",
+    "hbox": "text",
+}
+_KATEX_COMPAT_RE = re.compile(
+    r"\\(" + "|".join(re.escape(k) for k in _KATEX_COMPAT) + r")(?![A-Za-z@])"
+)
+
+
+def katex_normalize(body: str) -> str:
+    """Replace TeX primitives that KaTeX doesn't recognize."""
+    return _KATEX_COMPAT_RE.sub(
+        lambda m: "\\" + _KATEX_COMPAT[m.group(1)], body
+    )

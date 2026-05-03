@@ -18,7 +18,7 @@ from arxiv_md.tex.model import (
     SuperscriptSpan,
     TextSpan,
 )
-from arxiv_md.tex.transform.math_text import _MATH_UNICODE
+from arxiv_md.tex.transform.math_text import _MATH_UNICODE, katex_normalize as _katex_normalize
 
 import re as _re
 
@@ -193,6 +193,6 @@ class InlineSerializer:
 
         if node.rendered_text is not None:
             return node.rendered_text
-        body = node.tex
+        body = _katex_normalize(node.tex)
 
         return f"\\({body}\\)" if "$" in body else f"${body}$"

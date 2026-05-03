@@ -306,6 +306,14 @@ class RawLatex:
     env: str | None = None
 
 
+@dataclass(slots=True)
+class AlgorithmBlock:
+    """Pre-rendered algorithm pseudocode with inline math support."""
+
+    text: str
+    """Markdown-ready text with ``> `` prefixed lines and ``$...$`` math."""
+
+
 Block: TypeAlias = (
     Paragraph
     | Heading
@@ -316,6 +324,7 @@ Block: TypeAlias = (
     | QuoteBlock
     | CodeBlock
     | RawLatex
+    | AlgorithmBlock
 )
 """Discriminated union of every block the IR exposes publicly."""
 
@@ -329,6 +338,7 @@ BLOCK_TYPES: tuple[type, ...] = (
     QuoteBlock,
     CodeBlock,
     RawLatex,
+    AlgorithmBlock,
 )
 """Runtime variant tuple for consumers that need `isinstance` checks."""
 
@@ -370,6 +380,7 @@ __all__ = [
     "QuoteBlock",
     "CodeBlock",
     "RawLatex",
+    "AlgorithmBlock",
     "Block",
     "BLOCK_TYPES",
 ]

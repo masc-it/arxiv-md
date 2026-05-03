@@ -252,7 +252,7 @@ class Lexer:
     def _consume_special_escape(self, start: int, nxt: str) -> Token | None:
         if nxt == "\\":
             self.pos += 2
-            return Token(TokKind.TEXT, " ", start)
+            return Token(TokKind.COMMAND, "\\\\", start)
 
         if nxt in (" ", "\t", "\n"):
             self.pos += 2

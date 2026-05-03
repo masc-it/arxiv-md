@@ -6,6 +6,7 @@ from typing import Any, Callable
 from arxiv_md.tex._common import BibEntry, TexDocument
 
 from arxiv_md.tex.model import (
+    AlgorithmBlock,
     Block,
     CodeBlock,
     Figure,
@@ -23,6 +24,7 @@ from arxiv_md.tex.model import (
     TableSection,
 )
 from arxiv_md.tex.transform.inline_render import InlineSerializer
+from arxiv_md.tex.transform.math_text import katex_normalize as _katex_normalize
 
 _RENDER_SERIALIZER = InlineSerializer(ref_style="bracket")
 
@@ -88,7 +90,7 @@ def _render_paragraph(block: Paragraph) -> str:
 
 
 def _render_math(block: MathBlock) -> str:
-    body = block.text.strip()
+    body = _katex_normalize(block.text.strip())
     env = block.env or ""
     # Inner-math envs (matrix, cases) always need their own begin/end wrapper
     if env in _MATH_ENV_SELF_WRAP:
@@ -142,6 +144,10 @@ def _render_raw(block: RawLatex) -> str:
     return f"```latex\n{block.text}\n```"
 
 
+def _render_algorithm(block: AlgorithmBlock) -> str:
+    return block.text
+
+
 _BLOCK_RENDERERS: dict[type, Callable[[Any], str]] = {}
 
 
@@ -158,6 +164,7 @@ def _ensure_dispatch_table() -> dict[type, Callable[[Any], str]]:
                 QuoteBlock: _render_quote,
                 CodeBlock: _render_code,
                 RawLatex: _render_raw,
+                AlgorithmBlock: _render_algorithm,
             }
         )
     return _BLOCK_RENDERERS

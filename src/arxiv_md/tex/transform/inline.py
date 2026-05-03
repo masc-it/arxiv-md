@@ -202,6 +202,7 @@ TEXT_MACROS: dict[str, str] = {
     "textasciitilde": "~",
     "textasciicircum": "^",
     "newline": " ",
+    "\\\\": " ",
     "quad": " ",
     "qquad": " ",
     "hfill": " ",

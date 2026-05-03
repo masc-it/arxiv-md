@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import re
+
 from arxiv_md.tex.ast import Command, Env, Group, Math, Text
 from arxiv_md.tex.handler_types import TransformContextProtocol
-from arxiv_md.tex.model import Block, CodeBlock, Paragraph, TextSpan
+from arxiv_md.tex.model import AlgorithmBlock, Block, CodeBlock, InlineNode, MathSpan, Paragraph, QuoteBlock, TextSpan
 
 __all__ = [
     "ALGORITHM_ENVS",
@@ -116,7 +118,8 @@ _PSEUDOCODE_COMMANDS = (
     | frozenset(_BLOCK_CLOSE)
     | frozenset(_BLOCK_MID)
 )
-_COMMANDS_TO_SKIP = frozenset({"caption", "label"})
+_COMMANDS_TO_SKIP = frozenset({"caption", "label", "dontprintsemicolon", "DontPrintSemicolon", "SetAlgoLined", "SetAlgoNoLine", "SetAlgoNoEnd", "SetKwInOut", "SetKwInput", "SetKwComment"})
+_NEWLINE_COMMANDS = frozenset({"\\\\"})
 _COMMENT_COMMANDS = frozenset({"Comment", "COMMENT"})
 
 _INDENT = "  "
@@ -154,6 +157,8 @@ def _command_plain_name(name: str) -> str:
         return _KEYWORD_PREFIX[name]
     if name in _BLOCK_OPEN:
         return _BLOCK_OPEN[name]
+    if name in _NEWLINE_COMMANDS:
+        return " "
     return name
 
 
@@ -374,6 +379,9 @@ def _dispatch_command(
         _handle_comment(node, state, ctx)
     elif name in _COMMANDS_TO_SKIP:
         return
+    elif name in _NEWLINE_COMMANDS:
+        # \\ acts as statement separator in algorithm2e-style blocks
+        state.pending_indent = state.indent
     else:
         _handle_unknown_command(node, state, ctx)
 
@@ -417,6 +425,21 @@ def _extract_label(env: Env, ctx) -> str | None:
     return None
 
 
+def _algo_lines_to_markdown(lines: list[str]) -> str:
+    """Render algorithm lines as nested blockquotes with inline math.
+
+    Indentation is expressed via nested ``>`` markers (one per indent
+    level).  ``$...$`` segments are preserved so math renders inline.
+    """
+    rendered: list[str] = []
+    for line in lines:
+        stripped = line.lstrip(" ")
+        indent_level = (len(line) - len(stripped)) // len(_INDENT)
+        prefix = "> " * (indent_level + 1)
+        rendered.append(f"{prefix}{stripped}")
+    return "\n" + "\n".join(rendered)
+
+
 def _find_algorithmic_env(body: list) -> Env | None:
     for node in body:
         if isinstance(node, Env) and node.name in ALGORITHMIC_ENVS:
@@ -454,11 +477,10 @@ def algorithm_env(env: Env, ctx: TransformContextProtocol) -> list[Block]:
         cap_para.label = label
         blocks.append(cap_para)
 
-    blocks.append(CodeBlock(text=code_text))
+    blocks.append(AlgorithmBlock(text=_algo_lines_to_markdown(lines)))
     return blocks
 
 
 def algorithmic_env(env: Env, ctx: TransformContextProtocol) -> list[Block]:
     lines = _walk_algorithmic_body(list(env.body), ctx)
-    code_text = "\n".join(lines)
-    return [CodeBlock(text=code_text)]
+    return [AlgorithmBlock(text=_algo_lines_to_markdown(lines))]
