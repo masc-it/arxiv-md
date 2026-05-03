@@ -39,6 +39,8 @@ from arxiv_md.tex.transform.handlers.env_dispatch import (
 
 
 HEADING_LEVELS: dict[str, int] = {
+    "part": 1,
+    "chapter": 1,
     "section": 2,
     "subsection": 3,
     "subsubsection": 4,
