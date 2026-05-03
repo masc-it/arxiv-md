@@ -41,6 +41,7 @@ from arxiv_md.tex.macros import (
     build_strip_offset_map,
     collect_macros_full,
     discover_newtheorem,
+    strip_tex_conditionals,
 )
 from arxiv_md.tex.parser import parse as ast_parse
 from arxiv_md.tex.rendering import render_document_markdown
@@ -218,8 +219,10 @@ def _convert_tree(
     warnings.extend(expanded.warnings)
     stats.tex_files_read = len(expanded.files_read)
 
+    tex_text = strip_tex_conditionals(expanded.text)
+
     macro_warnings: list = []
-    collected = collect_macros_full(expanded.text, macro_warnings)
+    collected = collect_macros_full(tex_text, macro_warnings)
     macros_dict = collected.macros
     stripped_text = collected.stripped
     warnings.extend(macro_warnings)

@@ -597,3 +597,217 @@ def _remove_ranges(text: str, ranges: list[tuple[int, int]]) -> str:
         last = end
     out.append(text[last:])
     return "".join(out)
+
+
+# ---------------------------------------------------------------------------
+# TeX conditional stripping (\ifarxiv, \iftrue, \iffalse)
+# ---------------------------------------------------------------------------
+
+# Matches \newif\if<name> — defines a new boolean
+_NEWIF_RE = re.compile(r"\\newif\s*\\if([A-Za-z@]+)")
+
+# Matches \<name>true or \<name>false — sets a boolean
+_SETBOOL_RE = re.compile(r"\\([A-Za-z@]+?)(true|false)\b")
+
+# Matches any \if<word> token (the start of a conditional)
+_IF_CMD_RE = re.compile(r"\\if([A-Za-z@]+)")
+
+# Default truth values for well-known conditionals
+_DEFAULT_TRUE: frozenset[str] = frozenset({"arxiv"})
+
+
+def strip_tex_conditionals(text: str) -> str:
+    """Resolve \\ifarxiv / \\iftrue / \\iffalse conditionals at text level.
+
+    Scans for ``\\newif\\if<name>`` and ``\\<name>true``/``\\<name>false``
+    declarations to track boolean state, then resolves
+    ``\\if<name> ... \\else ... \\fi`` blocks by keeping the selected
+    branch.
+
+    * ``\\ifarxiv`` defaults to **true** (we process arXiv sources).
+    * ``\\iftrue`` always keeps the true-branch.
+    * ``\\iffalse`` always keeps the else-branch.
+    * Other ``\\if*`` commands are left untouched.
+    """
+    # First pass: collect \newif declarations and boolean assignments
+    booleans: dict[str, bool] = {}
+    for m in _NEWIF_RE.finditer(text):
+        name = m.group(1)
+        booleans[name] = name in _DEFAULT_TRUE
+    for m in _SETBOOL_RE.finditer(text):
+        name = m.group(1)
+        if name in booleans:
+            booleans[name] = m.group(2) == "true"
+
+    # Always resolve these built-in conditionals
+    booleans.setdefault("true", True)
+    booleans.setdefault("false", False)
+
+    # Nothing to resolve if no known conditionals
+    if not booleans:
+        return text
+
+    return _resolve_conditionals(text, booleans)
+
+
+def _resolve_conditionals(text: str, booleans: dict[str, bool]) -> str:
+    """Single-pass resolution of nested \\if / \\else / \\fi blocks."""
+    out: list[str] = []
+    i = 0
+    n = len(text)
+
+    while i < n:
+        # Skip comments
+        if text[i] == "%" and not _is_escaped(text, i):
+            nl = text.find("\n", i)
+            end = n if nl < 0 else nl + 1
+            out.append(text[i:end])
+            i = end
+            continue
+
+        if text[i] != "\\":
+            out.append(text[i])
+            i += 1
+            continue
+
+        # Check for \newif\if<name> — strip entirely
+        m_newif = _NEWIF_RE.match(text, i)
+        if m_newif:
+            i = m_newif.end()
+            # Skip trailing whitespace/newline
+            while i < n and text[i] in " \t":
+                i += 1
+            if i < n and text[i] == "\n":
+                i += 1
+            continue
+
+        # Check for \<name>true / \<name>false — strip if known boolean
+        m_set = _SETBOOL_RE.match(text, i)
+        if m_set and m_set.group(1) in booleans:
+            i = m_set.end()
+            while i < n and text[i] in " \t":
+                i += 1
+            if i < n and text[i] == "\n":
+                i += 1
+            continue
+
+        # Check for \if<name>
+        m_if = _IF_CMD_RE.match(text, i)
+        if m_if:
+            name = m_if.group(1)
+            if name in booleans:
+                resolved = _resolve_one_conditional(
+                    text, m_if.start(), m_if.end(), booleans[name], booleans
+                )
+                if resolved is not None:
+                    content, end_pos = resolved
+                    out.append(content)
+                    i = end_pos
+                    continue
+            # Unknown conditional — pass through
+            out.append(text[i : m_if.end()])
+            i = m_if.end()
+            continue
+
+        # Regular backslash — emit and advance
+        out.append(text[i])
+        i += 1
+
+    return "".join(out)
+
+
+def _resolve_one_conditional(
+    text: str,
+    if_start: int,
+    body_start: int,
+    condition: bool,
+    booleans: dict[str, bool],
+) -> tuple[str, int] | None:
+    """Parse \\if<name> ... [\\else ...] \\fi and return (selected_branch, end_pos).
+
+    Handles nested \\if/\\fi correctly by tracking depth.
+    Returns None if structure is malformed (no matching \\fi).
+    """
+    true_parts: list[str] = []
+    else_parts: list[str] = []
+    in_else = False
+    depth = 1  # We've consumed the opening \if
+    i = body_start
+    n = len(text)
+
+    while i < n and depth > 0:
+        # Skip comments
+        if text[i] == "%" and not _is_escaped(text, i):
+            nl = text.find("\n", i)
+            end = n if nl < 0 else nl + 1
+            chunk = text[i:end]
+            if in_else:
+                else_parts.append(chunk)
+            else:
+                true_parts.append(chunk)
+            i = end
+            continue
+
+        if text[i] == "\\":
+            # Check for nested \if<word>
+            m_nested = _IF_CMD_RE.match(text, i)
+            if m_nested:
+                depth += 1
+                chunk = text[i : m_nested.end()]
+                if in_else:
+                    else_parts.append(chunk)
+                else:
+                    true_parts.append(chunk)
+                i = m_nested.end()
+                continue
+
+            # Check for \else at depth 1
+            if text[i:i+5] == "\\else" and _is_word_boundary(text, i + 5):
+                if depth == 1:
+                    in_else = True
+                    i += 5
+                    continue
+                else:
+                    chunk = "\\else"
+                    if in_else:
+                        else_parts.append(chunk)
+                    else:
+                        true_parts.append(chunk)
+                    i += 5
+                    continue
+
+            # Check for \fi at current depth
+            if text[i:i+3] == "\\fi" and _is_word_boundary(text, i + 3):
+                depth -= 1
+                if depth == 0:
+                    i += 3
+                    break
+                chunk = "\\fi"
+                if in_else:
+                    else_parts.append(chunk)
+                else:
+                    true_parts.append(chunk)
+                i += 3
+                continue
+
+        # Regular character
+        if in_else:
+            else_parts.append(text[i])
+        else:
+            true_parts.append(text[i])
+        i += 1
+
+    if depth != 0:
+        return None  # Malformed — no matching \fi
+
+    selected = "".join(true_parts) if condition else "".join(else_parts)
+    # Recursively resolve nested conditionals in the selected branch
+    selected = _resolve_conditionals(selected, booleans)
+    return selected.strip(), i
+
+
+def _is_word_boundary(text: str, pos: int) -> bool:
+    """True if pos is at end-of-string or text[pos] is not a letter."""
+    if pos >= len(text):
+        return True
+    return not (text[pos].isalpha() or text[pos] == "@")
