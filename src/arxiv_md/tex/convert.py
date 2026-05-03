@@ -41,6 +41,8 @@ from arxiv_md.tex.macros import (
     build_strip_offset_map,
     collect_macros_full,
     discover_newtheorem,
+    expand_env_shorthands,
+    find_env_shorthand_macros,
     find_include_wrapper_macros,
     strip_tex_conditionals,
 )
@@ -238,6 +240,14 @@ def _convert_tree(
     macros_dict = collected.macros
     stripped_text = collected.stripped
     warnings.extend(macro_warnings)
+
+    # Expand env-shorthand macros (\be → \begin{equation}, etc.) at text
+    # level so the parser sees real \begin/\end pairs.
+    env_shorthands = find_env_shorthand_macros(macros_dict)
+    if env_shorthands:
+        stripped_text = expand_env_shorthands(stripped_text, env_shorthands)
+        for name in env_shorthands:
+            del macros_dict[name]
 
     strip_map = build_strip_offset_map(collected.remove_ranges)
 

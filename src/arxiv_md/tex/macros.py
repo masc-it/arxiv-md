@@ -168,6 +168,45 @@ _INCLUDE_WRAPPER_BODY_RE = re.compile(
     r"^\s*\\(input|include)\s*\{\s*#(\d+)\s*\}\s*$"
 )
 
+_ENV_SHORTHAND_RE = re.compile(
+    r"^\s*\\(begin|end)\s*\{([^{}]+)\}\s*$"
+)
+
+
+def find_env_shorthand_macros(
+    macros: dict[str, Macro],
+) -> dict[str, str]:
+    """Find macros whose body is exactly ``\\begin{X}`` or ``\\end{X}``.
+
+    Returns mapping of macro name → replacement text (e.g. ``\\begin{equation}``).
+    Only zero-argument macros qualify.
+    """
+    result: dict[str, str] = {}
+    for name, macro in macros.items():
+        if macro.argc != 0:
+            continue
+        m = _ENV_SHORTHAND_RE.match(macro.body)
+        if m:
+            result[name] = m.group(0).strip()
+    return result
+
+
+def expand_env_shorthands(text: str, shorthands: dict[str, str]) -> str:
+    """Text-substitute env-shorthand macros so the parser sees real
+    ``\\begin``/``\\end`` pairs."""
+    if not shorthands:
+        return text
+    # Build regex matching any of the shorthand command names
+    names = sorted(shorthands, key=len, reverse=True)
+    pattern = re.compile(
+        r"\\(" + "|".join(re.escape(n) for n in names) + r")(?![A-Za-z@])"
+    )
+
+    def _replace(m: re.Match[str]) -> str:
+        return shorthands[m.group(1)]
+
+    return pattern.sub(_replace, text)
+
 
 def _is_include_wrapper_body(body: str, argc: int) -> bool:
     """True when macro body is just ``\\input{#N}`` or ``\\include{#N}``."""
