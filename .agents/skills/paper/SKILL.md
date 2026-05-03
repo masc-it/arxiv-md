@@ -34,7 +34,7 @@ Store mentally (or in a scratch variable) as: `line → heading text`. Lines bef
 
 ## Step 3 — Orient and collect keywords
 
-Read the first ~100 lines to capture title, abstract, and intro:
+Read the first ~30 lines to capture title, abstract, and intro:
 
 ```
 Read: path=data/papers/<ID>/document.md, offset=1, limit=100
