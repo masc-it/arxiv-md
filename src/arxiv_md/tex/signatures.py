@@ -12,6 +12,7 @@ COMMAND_SIGNATURES: dict[str, str] = {
     "title": "om",
     "author": "om",
     "date": "m",
+    "index": "m",
     "abstract": "m",
     "thanks": "m",
     "and": "",

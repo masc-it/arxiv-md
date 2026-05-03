@@ -140,6 +140,7 @@ INLINE_DROPPED: frozenset[str] = frozenset(
         "ignorespacesafterend",
         "phantomsection",
         "bibitem",
+        "index",
     }
 )
 
