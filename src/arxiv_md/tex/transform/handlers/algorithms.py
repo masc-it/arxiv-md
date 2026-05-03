@@ -330,7 +330,8 @@ def _handle_math_node(
     ctx: TransformContextProtocol | None,
 ) -> None:
     math_text = _nodes_to_plain(list(node.body), ctx)
-    state.append_text(math_text)
+    if math_text:
+        state.append_text(f"${math_text}$")
 
 
 def _handle_group_or_env_node(
