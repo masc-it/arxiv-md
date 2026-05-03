@@ -11,6 +11,17 @@ from arxiv_md.tex.errors import ResourceLimitError, SourceReadError
 INCLUDE_RE = re.compile(r"\\(input|include|subfile)\s*\{([^{}]+)\}")
 
 
+def _build_include_re(aliases: dict[str, str] | None = None) -> re.Pattern[str]:
+    """Build include regex, optionally matching alias command names."""
+    names = ["input", "include", "subfile"]
+    if aliases:
+        for alias_name in sorted(aliases):
+            if alias_name not in names:
+                names.append(alias_name)
+    pattern = "|".join(re.escape(n) for n in names)
+    return re.compile(r"\\(" + pattern + r")\s*\{([^{}]+)\}")
+
+
 @dataclass(slots=True)
 class ExpandedSegment:
     expanded_start: int
@@ -59,6 +70,7 @@ class SourceReader:
         root_dir: Path,
         *,
         limits: ResourceLimits | None = None,
+        include_aliases: dict[str, str] | None = None,
     ) -> None:
         self.root_dir = root_dir
         self.limits = limits or ResourceLimits()
@@ -66,6 +78,7 @@ class SourceReader:
         self.files_read: list[Path] = []
         self.warnings: list[TexWarning] = []
         self._included: set[Path] = set()
+        self._include_re = _build_include_re(include_aliases)
 
         self._buf: list[str] = []
         self._buf_len: int = 0
@@ -193,10 +206,14 @@ class SourceReader:
         prefix_end: int,
     ) -> None:
         cursor = prefix_start
-        for m in INCLUDE_RE.finditer(text, prefix_start, prefix_end):
+        for m in self._include_re.finditer(text, prefix_start, prefix_end):
             if m.start() > cursor:
                 self._emit_chunk(current, cursor, text[cursor : m.start()])
             include_name = m.group(2).strip()
+            if "#" in include_name:
+                self._emit_chunk(current, m.start(), text[m.start() : m.end()])
+                cursor = m.end()
+                continue
             include_path = self._resolve_include(
                 include_name, current_dir=current.parent
             )
@@ -266,8 +283,11 @@ def expand_source(
     main_tex: Path,
     *,
     limits: ResourceLimits | None = None,
+    include_aliases: dict[str, str] | None = None,
 ) -> ExpandedSource:
-    return SourceReader(root_dir, limits=limits).expand(main_tex)
+    return SourceReader(
+        root_dir, limits=limits, include_aliases=include_aliases
+    ).expand(main_tex)
 
 
 def span_for_offset(

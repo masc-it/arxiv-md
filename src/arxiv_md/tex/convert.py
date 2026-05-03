@@ -41,6 +41,7 @@ from arxiv_md.tex.macros import (
     build_strip_offset_map,
     collect_macros_full,
     discover_newtheorem,
+    find_include_wrapper_macros,
     strip_tex_conditionals,
 )
 from arxiv_md.tex.parser import parse as ast_parse
@@ -216,6 +217,17 @@ def _convert_tree(
     warnings = list(tree.warnings or [])
 
     expanded = expand_source(tree.root_dir, tree.main_tex, limits=options.limits)
+
+    # Detect include-wrapper macros and re-expand with aliases
+    include_aliases = find_include_wrapper_macros(expanded.text)
+    if include_aliases:
+        expanded = expand_source(
+            tree.root_dir,
+            tree.main_tex,
+            limits=options.limits,
+            include_aliases=include_aliases,
+        )
+
     warnings.extend(expanded.warnings)
     stats.tex_files_read = len(expanded.files_read)
 

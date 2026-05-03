@@ -129,6 +129,9 @@ def _maybe_store_macro(
         )
         return
     if _unsafe_macro_body(macro.body):
+        if _is_include_wrapper_body(macro.body, macro.argc):
+            macros[macro.name] = macro
+            return
         if _xspace_like_pattern(macro.body) and _xspace_like_inert(macro.body):
             collapse = "." if _DOTLIKE_NAMES.search(macro.name) else " "
             macros[macro.name] = Macro(name=macro.name, argc=0, body=collapse)
@@ -159,6 +162,20 @@ def _xspace_like_pattern(body: str) -> bool:
 def _xspace_like_inert(body: str) -> bool:
     residue = _XSPACE_INNER_RE.sub("", body).strip()
     return all(ch.isspace() or ch in ".,;: " or ch == "\\" for ch in residue)
+
+
+_INCLUDE_WRAPPER_BODY_RE = re.compile(
+    r"^\s*\\(input|include)\s*\{\s*#(\d+)\s*\}\s*$"
+)
+
+
+def _is_include_wrapper_body(body: str, argc: int) -> bool:
+    """True when macro body is just ``\\input{#N}`` or ``\\include{#N}``."""
+    m = _INCLUDE_WRAPPER_BODY_RE.match(body)
+    if m is None:
+        return False
+    param_idx = int(m.group(2))
+    return 1 <= param_idx <= argc
 
 
 def _unsafe_macro_body(body: str) -> bool:
@@ -811,3 +828,44 @@ def _is_word_boundary(text: str, pos: int) -> bool:
     if pos >= len(text):
         return True
     return not (text[pos].isalpha() or text[pos] == "@")
+
+
+def find_include_wrapper_macros(text: str) -> dict[str, str]:
+    """Scan *text* for macro definitions whose body is ``\\input{#N}``
+    or ``\\include{#N}``.
+
+    Returns a mapping of macro name → include command (``'input'`` or
+    ``'include'``).
+    """
+    result: dict[str, str] = {}
+    macros: dict[str, Macro] = {}
+    i = 0
+    while i < len(text):
+        comment_end = _skip_comment_line(text, i)
+        if comment_end is not None:
+            i = comment_end
+            continue
+        matched = False
+        for pattern in _MACRO_DEF_PATTERNS:
+            if not text.startswith(pattern.prefix, i):
+                continue
+            if pattern.word_boundary and _continues_command_word(text, i, pattern):
+                continue
+            parsed = _parse_macro_pattern(pattern, text, i, macros)
+            if parsed is None:
+                i += max(pattern.skip_len, 1)
+                matched = True
+                break
+            macro, end = parsed
+            if macro is not None:
+                macros[macro.name] = macro
+                if _is_include_wrapper_body(macro.body, macro.argc):
+                    m = _INCLUDE_WRAPPER_BODY_RE.match(macro.body)
+                    if m:
+                        result[macro.name] = m.group(1)
+            i = end
+            matched = True
+            break
+        if not matched:
+            i += 1
+    return result
